@@ -42,8 +42,7 @@ void menu()
     printf("1. Tambah Data\n");
     printf("2. Cari Data\n");
     printf("3. Hapus Data\n");
-    printf("4. Cari Rata-rata\n");
-    printf("5. Keluar\n");
+    printf("4. Keluar\n");
     printf("Silahkan pilih : ");
     scanf("%d", &pilih);
     fflush(stdin);
