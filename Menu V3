@@ -1,0 +1,235 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef  struct simpul dnode;
+
+struct simpul
+{
+    char nama[30];
+    int nomor;
+    int nilai;
+    dnode *prev, *next;
+};
+
+void alokasi();
+void tampil();
+void menu();
+void bebas();
+void cari();
+void hapusdata();
+void sisip();
+void rata();
+
+dnode *p=NULL;
+dnode *head=NULL;
+dnode *hapus=NULL;
+int depan;
+int belakang;
+
+int main()
+{
+    do
+    {
+        menu();
+    }
+    while(1);
+    return 0;
+}
+
+void menu()
+{
+    int pilih;
+    printf("Menu : \n");
+    printf("1. Tambah Data\n");
+    printf("2. Cari Data\n");
+    printf("3. Hapus Data\n");
+    printf("4. Cari Rata-rata\n");
+    printf("5. Keluar\n");
+    printf("Silahkan pilih : ");
+    scanf("%d", &pilih);
+    fflush(stdin);
+    if(pilih==1)
+    {
+        alokasi();
+        sisip();
+        tampil();
+    }
+    else if(pilih==2)
+    {
+        if(head==NULL)
+        {
+            printf("Belum ada SLL, pilih tambah data dahulu\n\n");
+            menu();
+        }
+        cari();
+        printf("Data dalam SLL : \n");
+        tampil();
+    }
+    else if(pilih==3)
+    {
+        if(head==NULL)
+        {
+            printf("Belum ada SLL, pilih tambah data dahulu\n\n");
+            menu();
+        }
+        hapusdata();
+        tampil();
+    }
+    else if(pilih==4)
+    {
+        rata();
+    }
+    else
+        exit(0);
+}
+
+void rata()
+{
+    p=head;
+    int i=0;
+    int total=0;
+    float rata;
+    do
+    {
+        i++;
+        total+=p->nilai;
+        p=p->next;
+    }while(p!=NULL);
+    rata=total/i;
+    printf("\nRata-rata : %.2f\n\n", rata);
+}
+
+void sisip()
+{
+    int nomor=p->nomor;
+    if(head==NULL||nomor<=depan)
+    {
+        if(head!=NULL)
+        {
+            p->next=head;
+            head->prev=p;
+        }
+        head=p;
+        depan=nomor;
+    }
+    else if(nomor>=belakang)
+    {
+        dnode *tail=head;
+        if(head==NULL)
+            head=p;
+        else
+        {
+            while(tail->next!=NULL)
+                tail=tail->next;
+            p->prev=tail;
+            tail->next=p;
+            tail=p;
+        }
+        belakang=nomor;
+    }
+    else
+    {
+        dnode *bef=head;
+        while(bef->nomor < nomor)
+            bef=bef->next;
+        p->next=bef;
+        p->prev=bef->prev;
+        if(bef->prev!=NULL)
+            bef->prev->next=p;
+        bef->prev=p;
+    }
+}
+void hapusdata()
+{
+    hapus=head;
+    int key;
+    printf("Delete data : ");
+    scanf("%d", &key);
+    fflush(stdin);
+    if(head->nomor==key)
+    {
+        head=hapus->next;
+        head->prev=NULL;
+    }
+    else
+    {
+        while(hapus->nomor!=key)
+        {
+            if(hapus->next==NULL)
+            {
+                printf("Key tidak ada \n");
+                menu();
+            }
+            hapus=hapus->next;
+
+        }
+        if(hapus->next!=NULL)
+            hapus->next->prev=hapus->prev;
+        hapus->prev->next=hapus->next;
+    }
+    bebas();
+}
+
+void cari()
+{
+    int key;
+    int sum=0;
+    dnode *cari=head;
+    printf("Masukkan data yang ingin dicari : ");
+    scanf("%d", &key);
+    fflush(stdin);
+    while(cari!=NULL)
+    {
+        if(cari->nomor==key)
+            sum++;
+        cari=cari->next;
+    }
+    if(sum==0)
+        printf("%d tidak ada dalam SLL\n\n", key);
+    printf("%d ada sebanyak %d dalam SLL\n\n", key, sum);
+}
+
+void alokasi()
+{
+    p=(dnode*)malloc(sizeof(dnode));
+    if(p==NULL)
+    {
+        printf("Gagal");
+        exit(0);
+    }
+    else
+    {
+        printf("Masukkan nomor : ");
+        scanf("%d", &p->nomor);
+        fflush(stdin);
+        printf("Masukkan nama : ");
+        gets(p->nama);
+        fflush(stdin);
+        printf("Masukkan nilai : ");
+        scanf("%d", &p->nilai);
+        fflush(stdin);
+        p->next=NULL;
+        p->prev=NULL;
+    }
+}
+
+void bebas()
+{
+    free(hapus);
+    hapus=NULL;
+}
+
+void tampil()
+{
+    p = head;
+    printf("\n                DATA\n");
+    printf("==============================================\n");
+    printf("|No \t |Nama \t\t\t\t |Nilai |\n");
+    printf("==============================================\n");
+    do
+    {
+        printf("|%d \t |%s \t\t\t |%d |\n", p->nomor, p->nama, p->nilai);
+        p = p->next;
+    } while (p != NULL);
+    printf("=============================================\n");
+}
